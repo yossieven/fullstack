@@ -2,3 +2,21 @@
     <h1>Welcome</h1>
     <p>fullstack course</p>
 </div>
+<table class="table">
+    <thead>
+        <th>Name</th>
+        <th>Phone</th>
+        <th>Email</th>
+        <th>Avatar</th>
+    </thead>
+    <tbody>
+        {{#each students}}
+        <tr>
+            <td>{{this.student_name}}</td>
+            <td>{{this.phone}}</td>
+            <td>{{this.email}}</td>
+            <td>{{this.avatar}}</td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>

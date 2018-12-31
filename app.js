@@ -3,6 +3,8 @@ const path = require("path");
 const hbs = require("express-handlebars");
 const express = require('express');
 const morgan = require('morgan');
+const models = require('./models');
+
 
 const app = express();
 app.use(morgan('dev'));

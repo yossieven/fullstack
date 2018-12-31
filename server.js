@@ -1,13 +1,11 @@
-const express = require("express");
-
+const CONFIG = require('./config/config');
 const http = require('http');
 const app = require('./app');
 
-const port = process.env.PORT || 3000;
 const server = http.createServer(app);
 
 
-server.listen(port);
+server.listen(CONFIG.port);
 
 // , () => {
 //     console.log(`server started on port ${app.get('port')}`);
