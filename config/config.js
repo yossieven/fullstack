@@ -4,11 +4,11 @@ if (result.error) {
     throw result.error
 }
 
-console.log(result.parsed);
+
 
 let CONFIG = {} //Make this global to use all over the application
 
-CONFIG.app = process.env.APP || 'dev';
+CONFIG.app = process.env.APP || 'development';
 CONFIG.port = process.env.PORT || '3000';
 
 CONFIG.db_dialect = process.env.DB_DIALECT || 'mysql';
