@@ -33,9 +33,11 @@ router.get('/:id', (req, res, next) => {
     knex.select().from('product').then((products) => {
         // res.send(products);
         console.log(products);
-        res.render('home', {
-            products: products
-        })
+        Response.success = true;
+        Response.data = products;
+        // res.render('home', {
+        //     products: products
+        // })
     }).catch((error) => {
         console.log(error);
         next(error);
@@ -55,18 +57,13 @@ router.post('/', (req, res, next) => {
             res.status(400);
             next(err);
         } else {
-            knex('product').insert(product).then(() => {
-                knex.select().from('product').then((products) => {
-                    // res.send(products);
-                    console.log(products);
-                    res.status(201);
-                    res.render('home', {
-                        products: products
-                    })
-                }).catch((error) => {
-                    console.log("error", error);
-                    next(error);
-                });
+            knex('product').returning('id').insert(product).then((id) => {
+                send.status(200);
+                Response.success = true;
+                Response.data = {
+                    id: id
+                };
+                send(Response);
             }).catch((error) => {
                 console.log("error", error);
                 next(error);
@@ -96,20 +93,16 @@ router.put('/:id', (req, res, next) => {
                 .then((updatedRow) => {
                     // res.send(products);
                     console.log("updated Row ", updatedRow);
-                    knex.select().from('product').then((products) => {
-                        // res.send(products);
-                        console.log(products);
-                        res.render('home', {
-                            products: products
-                        })
-                    }).catch((error) => {
-                        console.log("error", error);
-                        next(error);
-                    });
+                    send(Response);
                     if (updatedRow == 0) {
                         res.status(404);
                         throw new Error("Product not found");
                     }
+                    send.status(200);
+                    Response.success = true;
+                    Response.data = {
+                        id: req.params.id
+                    };
                 }).catch((error) => {
                     console.log("error", error);
                     next(error);
@@ -131,20 +124,15 @@ router.delete('/:id', (req, res, next) => {
         .then((result) => {
             // res.send(products);
             console.log("deleted Row", result);
-            knex.select().from('product').then((products) => {
-                // res.send(products);
-                console.log(products);
-                res.render('home', {
-                    products: products
-                })
-            }).catch((error) => {
-                console.log("error", error);
-                next(error);
-            });
             if (result == 0) {
                 res.status(404);
                 throw new Error("Product not found");
             }
+            send.status(200);
+            Response.success = true;
+            Response.data = {
+                id: req.params.id
+            };
         }).catch((error) => {
             console.log("error", error);
             next(error);
