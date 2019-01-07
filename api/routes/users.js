@@ -10,7 +10,6 @@ let Response = {
     success: false,
     data: []
 }
-//const models = require("../../models");
 
 router.get('/', (req, res, next) => {
     console.log("getting products...");
