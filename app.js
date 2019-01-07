@@ -3,7 +3,7 @@ const path = require("path");
 const hbs = require("express-handlebars");
 const express = require('express');
 const morgan = require('morgan');
-const models = require('./models');
+// const models = require('./models');
 
 
 const app = express();
@@ -31,8 +31,8 @@ app.set('view engine', 'handlebars');
 
 
 
-const studentRoutes = require('./api/routes/students');
-app.use('/api/student', studentRoutes);
+const productsRoutes = require('./api/routes/products');
+app.use('/api/products', productsRoutes);
 
 app.use((req, res, next) => {
     const error = new Error('Not Found');
@@ -44,8 +44,9 @@ app.use((err, req, res, next) => {
     res.status(err.status || 500);
     res.json({
         error: {
-            message: err.message
+            message: "there was an error: " + err.message
         }
     });
+    next();
 })
 module.exports = app;

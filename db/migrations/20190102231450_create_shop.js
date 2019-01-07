@@ -1,16 +1,28 @@
 exports.up = function (knex, Promise) {
     console.log("running latest...");
-    return knex.schema.hasTable('product').then((exists) => {
-        console.log('does knex have product table?', exists);
+    return knex.schema.hasTable('category').then((exists) => {
+        console.log('does knex have category table?', exists);
         if (!exists) {
-            return knex.schema.createTable('product', function (table) {
+            return knex.schema.createTable('category', (table) => {
                 table.increments();
-                table.string('name');
-                table.integer('category');
-                table.decimal('price', 10, 2);
-                table.text('image');
+                table.string('name').notNullable();
+
             });
         }
+    }).then(() => {
+        return knex.schema.hasTable('product').then((exists) => {
+            console.log('does knex have product table?', exists);
+            if (!exists) {
+                return knex.schema.createTable('product', function (table) {
+                    table.increments();
+                    table.string('name');
+                    table.integer('category').unsigned();
+                    table.decimal('price', 10, 2);
+                    table.text('image');
+                    table.foreign('category').references('id').inTable('category');
+                });
+            }
+        })
     }).then(() => {
         return knex.schema.hasTable('user').then((exists) => {
             console.log('does knex have user table?', exists);
@@ -51,17 +63,6 @@ exports.up = function (knex, Promise) {
                     table.integer('cart_id').unsigned();
                     table.foreign('product_id').references('id').inTable('product');
                     table.foreign('cart_id').references('id').inTable('cart');
-                });
-            }
-        });
-    }).then(() => {
-        return knex.schema.hasTable('category').then((exists) => {
-            console.log('does knex have category table?', exists);
-            if (!exists) {
-                return knex.schema.createTable('category', (table) => {
-                    table.increments();
-                    table.string('name').notNullable();
-
                 });
             }
         });

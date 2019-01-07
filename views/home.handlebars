@@ -5,17 +5,17 @@
 <table class="table">
     <thead>
         <th>Name</th>
-        <th>Phone</th>
-        <th>Email</th>
-        <th>Avatar</th>
+        <th>Category</th>
+        <th>Price</th>
+        <th>Image</th>
     </thead>
     <tbody>
-        {{#each students}}
+        {{#each products}}
         <tr>
-            <td>{{this.student_name}}</td>
-            <td>{{this.phone}}</td>
-            <td>{{this.email}}</td>
-            <td>{{this.avatar}}</td>
+            <td>{{this.name}}</td>
+            <td>{{this.category}}</td>
+            <td>{{this.price}}</td>
+            <td>{{this.image}}</td>
         </tr>
         {{/each}}
     </tbody>
