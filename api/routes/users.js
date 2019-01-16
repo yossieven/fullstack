@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Joi = require('joi');
 const knex = require('../../db/knex');
-const productSchema = require('../../models/product_validation');
+const userChema = require('../../models/user_validation');
 const path = require('path')
 
 
@@ -12,14 +12,11 @@ let Response = {
 }
 
 router.get('/', (req, res, next) => {
-    console.log("getting products...");
-    knex.select().from('product').then((products) => {
+    console.log("getting users...");
+    knex.select().from('user').then((users) => {
         Response.success = true;
-        Response.data = products;
+        Response.data = users;
         res.send(Response);
-        // res.render('home', {
-        //     products: products
-        // })
     }).catch((error) => {
         console.log(error);
         next(error);
@@ -27,16 +24,13 @@ router.get('/', (req, res, next) => {
 });
 
 router.get('/:id', (req, res, next) => {
-    console.log("getting product " + req.params.id);
+    console.log("getting user " + req.params.id);
 
-    knex.select().from('product').then((products) => {
+    knex.select().from('user').then((users) => {
         // res.send(products);
-        console.log(products);
+        console.log(users);
         Response.success = true;
-        Response.data = products;
-        // res.render('home', {
-        //     products: products
-        // })
+        Response.data = users;
     }).catch((error) => {
         console.log(error);
         next(error);
@@ -44,25 +38,28 @@ router.get('/:id', (req, res, next) => {
 });
 
 router.post('/', (req, res, next) => {
-    const product = {
+    const user = {
         name: req.body.name,
-        category: req.body.category,
-        price: req.body.price,
-        image: req.body.image
+        last_name: req.body.last_name,
+        email: req.body.email,
+        password: req.body.password,
+        city: req.body.city,
+        street: req.body.street,
+        role: req.body.role
     };
-    console.log("product", product);
-    productSchema.validate(product, (err, value) => {
+    console.log("user", user);
+    userChema.validate(user, (err, value) => {
         if (err) {
             res.status(400);
             next(err);
         } else {
-            knex('product').returning('id').insert(product).then((id) => {
-                send.status(200);
+            knex('user').returning('id').insert(user).then((id) => {
+                res.status(200);
                 Response.success = true;
                 Response.data = {
                     id: id
                 };
-                send(Response);
+                res.send(Response);
             }).catch((error) => {
                 console.log("error", error);
                 next(error);
@@ -72,23 +69,26 @@ router.post('/', (req, res, next) => {
 })
 
 router.put('/:id', (req, res, next) => {
-    console.log("updating product ", req.params.id);
-    const product = {
+    console.log("updating user ", req.params.id);
+    const user = {
         name: req.body.name,
-        category: req.body.category,
-        price: req.body.price,
-        image: req.body.image
+        last_name: req.body.last_name,
+        email: req.body.email,
+        password: req.body.password,
+        city: req.body.city,
+        street: req.body.street,
+        role: req.body.role
     };
-    productSchema.validate(product, (err, value) => {
+    userChema.validate(user, (err, value) => {
         if (err) {
             res.status(400);
             next(err);
         } else {
-            knex('product')
+            knex('user')
                 .where({
                     'id': req.params.id
                 })
-                .update(product)
+                .update(user)
                 .then((updatedRow) => {
                     // res.send(products);
                     console.log("updated Row ", updatedRow);
@@ -113,9 +113,9 @@ router.put('/:id', (req, res, next) => {
 })
 
 router.delete('/:id', (req, res, next) => {
-    console.log("deleting product ", req.params.id);
+    console.log("deleting user ", req.params.id);
 
-    const deleted = knex('product')
+    const deleted = knex('user')
         .where({
             'id': req.params.id
         })
@@ -125,7 +125,7 @@ router.delete('/:id', (req, res, next) => {
             console.log("deleted Row", result);
             if (result == 0) {
                 res.status(404);
-                throw new Error("Product not found");
+                throw new Error("User not found");
             }
             send.status(200);
             Response.success = true;
