@@ -92,16 +92,16 @@ router.put('/:id', (req, res, next) => {
                 .then((updatedRow) => {
                     // res.send(products);
                     console.log("updated Row ", updatedRow);
-                    send(Response);
                     if (updatedRow == 0) {
                         res.status(404);
                         throw new Error("Product not found");
                     }
-                    send.status(200);
+                    res.status(200);
                     Response.success = true;
                     Response.data = {
                         id: req.params.id
                     };
+                    res.send(Response);
                 }).catch((error) => {
                     console.log("error", error);
                     next(error);
@@ -127,11 +127,12 @@ router.delete('/:id', (req, res, next) => {
                 res.status(404);
                 throw new Error("User not found");
             }
-            send.status(200);
+            res.status(200);
             Response.success = true;
             Response.data = {
                 id: req.params.id
             };
+            res.send(Response);
         }).catch((error) => {
             console.log("error", error);
             next(error);

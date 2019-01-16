@@ -7,7 +7,7 @@ const schema = Joi.object().keys({
     email: Joi.string().email({
         minDomainAtoms: 2
     }).required(),
-    password: Joi.string().alphanum().min(4).required(),
+    password: Joi.string().regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/),
     city: Joi.string().regex(/[\w+א-ת+]/),
     street: Joi.string().regex(/[\w+א-ת+]/),
     role: Joi.number().integer().min(0).max(2)
