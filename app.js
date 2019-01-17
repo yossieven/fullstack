@@ -7,6 +7,7 @@ const morgan = require('morgan');
 
 
 const app = express();
+app.use("/assets/images", express.static('assets/images')); // make upload folder available
 app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
