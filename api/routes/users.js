@@ -31,6 +31,7 @@ router.get('/:id', (req, res, next) => {
         console.log(users);
         Response.success = true;
         Response.data = users;
+        res.send(Response);
     }).catch((error) => {
         console.log(error);
         next(error);
