@@ -51,10 +51,10 @@ exports.seed = function (knex, Promise) {
       },
       {
         id: 8,
-        "name": "עגבניות",
-        "category": 2,
-        "price": 6.9,
-        "image": "z_22.png"
+        name: "עגבניות",
+        category: 2,
+        price: 6.9,
+        image: "z_22.png"
       }
     ])
     .catch((err) => {

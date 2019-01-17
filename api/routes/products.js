@@ -1,10 +1,32 @@
+const CONFIG = require('../../config/config');
 const express = require('express');
 const router = express.Router();
-const Joi = require('joi');
 const knex = require('../../db/knex');
 const productSchema = require('../../models/product_validation');
-const path = require('path')
+const multer = require('multer');
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, CONFIG.uploads);
+    },
+    filename: function (req, file, cb) {
+        cb(null, Date.now() + file.originalname);
+    }
+})
 
+const fileFilter = (req, file, cb) => {
+    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png' || file.mimetype == 'image/jpg') {
+        cb(null, true);
+    } else {
+        cb(new Error('wrong file type for image'), false);
+    }
+}
+const upload = multer({
+    storage: storage,
+    limits: {
+        fileSize: 1024 * 1024 * 5
+    },
+    fileFilter: fileFilter
+});
 
 let Response = {
     success: false,
@@ -66,12 +88,13 @@ router.get('/category/:id', (req, res, next) => {
         });
 });
 
-router.post('/', (req, res, next) => {
+router.post('/', upload.single('image'), (req, res, next) => {
+    console.log(req.file);
     const product = {
         name: req.body.name,
         category: req.body.category,
         price: req.body.price,
-        image: req.body.image
+        image: req.file.path
     };
     console.log("product", product);
     productSchema.validate(product, (err, value) => {
@@ -80,7 +103,7 @@ router.post('/', (req, res, next) => {
             next(err);
         } else {
             knex('product').returning('id').insert(product).then((id) => {
-                send.status(200);
+                res.status(200);
                 Response.success = true;
                 Response.data = {
                     id: id
@@ -94,13 +117,13 @@ router.post('/', (req, res, next) => {
     });
 })
 
-router.put('/:id', (req, res, next) => {
+router.put('/:id', upload.single('image'), (req, res, next) => {
     console.log("updating product ", req.params.id);
     const product = {
         name: req.body.name,
         category: req.body.category,
         price: req.body.price,
-        image: req.body.image
+        image: req.file.path
     };
     productSchema.validate(product, (err, value) => {
         if (err) {
@@ -150,11 +173,12 @@ router.delete('/:id', (req, res, next) => {
                 res.status(404);
                 throw new Error("Product not found");
             }
-            res.send.status(200);
+            res.status(200);
             Response.success = true;
             Response.data = {
                 id: req.params.id
             };
+            res.send(Response);
         }).catch((error) => {
             console.log("error", error);
             next(error);
