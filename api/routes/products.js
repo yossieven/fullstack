@@ -44,6 +44,28 @@ router.get('/:id', (req, res, next) => {
     });
 });
 
+router.get('/category/:id', (req, res, next) => {
+    console.log("getting product by category " + req.params.id);
+
+    knex('product').where({
+            'category': req.params.id
+        })
+        .select().then((products) => {
+            // res.send(products);
+            console.log(products);
+            Response.success = true;
+            Response.data = products;
+            // res.render('home', {
+            //     products: products
+            // })
+            res.send(Response);
+        })
+        .catch((error) => {
+            console.log(error);
+            next(error);
+        });
+});
+
 router.post('/', (req, res, next) => {
     const product = {
         name: req.body.name,
@@ -63,7 +85,7 @@ router.post('/', (req, res, next) => {
                 Response.data = {
                     id: id
                 };
-                send(Response);
+                res.send(Response);
             }).catch((error) => {
                 console.log("error", error);
                 next(error);
@@ -98,7 +120,7 @@ router.put('/:id', (req, res, next) => {
                         res.status(404);
                         throw new Error("Product not found");
                     }
-                    send.status(200);
+                    res.send.status(200);
                     Response.success = true;
                     Response.data = {
                         id: req.params.id
@@ -128,7 +150,7 @@ router.delete('/:id', (req, res, next) => {
                 res.status(404);
                 throw new Error("Product not found");
             }
-            send.status(200);
+            res.send.status(200);
             Response.success = true;
             Response.data = {
                 id: req.params.id
