@@ -34,8 +34,10 @@ app.set('view engine', 'handlebars');
 
 const productsRoutes = require('./api/routes/products');
 const usersRoutes = require('./api/routes/users');
+const cartItemRoutes = require('./api/routes/cartItems')
 app.use('/api/products', productsRoutes);
 app.use('/api/users', usersRoutes);
+app.use('/api/cartItems', cartItemRoutes)
 
 app.use((req, res, next) => {
     const error = new Error('Not Found');

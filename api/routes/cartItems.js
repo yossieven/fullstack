@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Joi = require('joi');
 const knex = require('../../db/knex');
-const userChema = require('../../models/user_validation');
+// const cartItemChema = require('../../models/cartItem_validation');
 const path = require('path')
 
 
@@ -12,35 +12,45 @@ let Response = {
 }
 
 router.get('/', (req, res, next) => {
-    console.log("getting users...");
-    knex.select().from('user').then((users) => {
-        Response.success = true;
-        Response.data = users;
-        res.send(Response);
-    }).catch((error) => {
-        console.log(error);
-        next(error);
-    });
+    console.log("getting cart items...");
+    knex('cart_item')
+        .join('product', {
+            'product.id': 'cart_item.product_id'
+        })
+        .select('product.id', 'product.name', 'cart_item.id', 'cart_item.amount', 'cart_item.total', 'cart_item.cart_id')
+        .then((cartItems) => {
+            Response.success = true;
+            Response.data = cartItems;
+            res.send(Response);
+        }).catch((error) => {
+            console.log(error);
+            next(error);
+        });
 });
 
 router.get('/:id', (req, res, next) => {
-    console.log("getting user " + req.params.id);
-
-    knex.select().from('user').then((users) => {
-        // res.send(products);
-        console.log(users);
-        Response.success = true;
-        Response.data = users;
-        res.send(Response);
-    }).catch((error) => {
-        console.log(error);
-        next(error);
-    });
+    console.log("getting cart_item " + req.params.id);
+    knex('cart_item')
+        .join('products', {
+            'product.id': 'cart_item.product_id'
+        })
+        .select('product.id', 'product.name', 'cart_item.id', 'cart_item.amount', 'cart_item.total', 'cart_item.cart_id')
+        .where('id', req.params.id)
+        .then((cartItems) => {
+            // res.send(products);
+            console.log(cartItems);
+            Response.success = true;
+            Response.data = cartItems;
+            res.send(Response);
+        }).catch((error) => {
+            console.log(error);
+            next(error);
+        });
 });
 
 router.post('/', (req, res, next) => {
-    const user = {
-        name: req.body.name,
+    const cartItem = {
+        product_id: req.body.product_id,
         last_name: req.body.last_name,
         email: req.body.email,
         password: req.body.password,
@@ -48,13 +58,13 @@ router.post('/', (req, res, next) => {
         street: req.body.street,
         role: req.body.role
     };
-    console.log("user", user);
-    userChema.validate(user, (err, value) => {
+    console.log("cart_item", cartItem);
+    cartItemChema.validate(cartItem, (err, value) => {
         if (err) {
             res.status(400);
             next(err);
         } else {
-            knex('user').returning('id').insert(user).then((id) => {
+            knex('cart_item').returning('id').insert(cartItem).then((id) => {
                 res.status(200);
                 Response.success = true;
                 Response.data = {
@@ -70,8 +80,8 @@ router.post('/', (req, res, next) => {
 })
 
 router.put('/:id', (req, res, next) => {
-    console.log("updating user ", req.params.id);
-    const user = {
+    console.log("updating cart_item ", req.params.id);
+    const cartItem = {
         name: req.body.name,
         last_name: req.body.last_name,
         email: req.body.email,
@@ -80,16 +90,16 @@ router.put('/:id', (req, res, next) => {
         street: req.body.street,
         role: req.body.role
     };
-    userChema.validate(user, (err, value) => {
+    cartItemChema.validate(cartItem, (err, value) => {
         if (err) {
             res.status(400);
             next(err);
         } else {
-            knex('user')
+            knex('cart_item')
                 .where({
                     'id': req.params.id
                 })
-                .update(user)
+                .update(cart_item)
                 .then((updatedRow) => {
                     // res.send(products);
                     console.log("updated Row ", updatedRow);
@@ -114,9 +124,9 @@ router.put('/:id', (req, res, next) => {
 })
 
 router.delete('/:id', (req, res, next) => {
-    console.log("deleting user ", req.params.id);
+    console.log("deleting cart_item ", req.params.id);
 
-    const deleted = knex('user')
+    const deleted = knex('cart_item')
         .where({
             'id': req.params.id
         })
@@ -126,7 +136,7 @@ router.delete('/:id', (req, res, next) => {
             console.log("deleted Row", result);
             if (result == 0) {
                 res.status(404);
-                throw new Error("User not found");
+                throw new Error("cart_item not found");
             }
             res.status(200);
             Response.success = true;
