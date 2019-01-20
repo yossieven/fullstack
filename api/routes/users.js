@@ -95,7 +95,7 @@ router.put('/:id', (req, res, next) => {
                     console.log("updated Row ", updatedRow);
                     if (updatedRow == 0) {
                         res.status(404);
-                        throw new Error("Product not found");
+                        throw new Error("user not found");
                     }
                     res.status(200);
                     Response.success = true;

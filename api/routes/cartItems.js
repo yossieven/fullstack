@@ -51,12 +51,9 @@ router.get('/:id', (req, res, next) => {
 router.post('/', (req, res, next) => {
     const cartItem = {
         product_id: req.body.product_id,
-        last_name: req.body.last_name,
-        email: req.body.email,
-        password: req.body.password,
-        city: req.body.city,
-        street: req.body.street,
-        role: req.body.role
+        amount: req.body.amount,
+        total: req.body.total,
+        cart_id: req.body.cart_id
     };
     console.log("cart_item", cartItem);
     cartItemChema.validate(cartItem, (err, value) => {
@@ -82,13 +79,10 @@ router.post('/', (req, res, next) => {
 router.put('/:id', (req, res, next) => {
     console.log("updating cart_item ", req.params.id);
     const cartItem = {
-        name: req.body.name,
-        last_name: req.body.last_name,
-        email: req.body.email,
-        password: req.body.password,
-        city: req.body.city,
-        street: req.body.street,
-        role: req.body.role
+        product_id: req.body.product_id,
+        amount: req.body.amount,
+        total: req.body.total,
+        cart_id: req.body.cart_id
     };
     cartItemChema.validate(cartItem, (err, value) => {
         if (err) {
@@ -105,7 +99,7 @@ router.put('/:id', (req, res, next) => {
                     console.log("updated Row ", updatedRow);
                     if (updatedRow == 0) {
                         res.status(404);
-                        throw new Error("Product not found");
+                        throw new Error("cart_item not found");
                     }
                     res.status(200);
                     Response.success = true;
