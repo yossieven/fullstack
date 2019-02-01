@@ -52,18 +52,23 @@ router.get('/', (req, res, next) => {
 router.get('/:id', (req, res, next) => {
     console.log("getting product " + req.params.id);
 
-    knex.select().from('product').then((products) => {
-        // res.send(products);
-        console.log(products);
-        Response.success = true;
-        Response.data = products;
-        // res.render('home', {
-        //     products: products
-        // })
-    }).catch((error) => {
-        console.log(error);
-        next(error);
-    });
+    knex('product').where({
+            'id': req.params.id
+        })
+        .select().then((products) => {
+            // res.send(products);
+            console.log(products);
+            Response.success = true;
+            Response.data = products;
+            res.status(200);
+            res.send(Response);
+            // res.render('home', {
+            //     products: products
+            // })
+        }).catch((error) => {
+            console.log(error);
+            next(error);
+        });
 });
 
 router.get('/category/:id', (req, res, next) => {
@@ -80,6 +85,7 @@ router.get('/category/:id', (req, res, next) => {
             // res.render('home', {
             //     products: products
             // })
+            res.status(200);
             res.send(Response);
         })
         .catch((error) => {
