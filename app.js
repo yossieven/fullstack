@@ -11,6 +11,7 @@ const app = express();
 //app.use(cors());
 app.use("/assets/images", express.static('assets/images')); // make upload folder available
 app.use(morgan('dev'));
+
 app.use(bodyParser.json({
     limit: '50mb'
 }));
