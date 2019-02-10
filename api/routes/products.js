@@ -1,9 +1,13 @@
 const CONFIG = require('../../config/config');
 const express = require('express');
+const cors = require('cors');
 const router = express.Router();
 const knex = require('../../db/knex');
 const productSchema = require('../../models/product_validation');
 const multer = require('multer');
+
+
+
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, CONFIG.uploads);
@@ -94,8 +98,8 @@ router.get('/category/:id', (req, res, next) => {
         });
 });
 
-router.post('/', upload.single('image'), (req, res, next) => {
-    console.log(req.file);
+router.post('/', upload.single('image'), cors(), (req, res, next) => {
+    console.log("the file", req.file);
     const product = {
         name: req.body.name,
         category: req.body.category,
@@ -123,37 +127,39 @@ router.post('/', upload.single('image'), (req, res, next) => {
     });
 })
 
-router.put('/:id', upload.single('image'), (req, res, next) => {
-    console.log("updating product ", req.params.id);
+router.post('/:id', upload.single('image'), cors(), (req, res, next) => {
+    console.log("updating product ", req.body.id);
+    console.log("image path", req.file.filename);
     const product = {
         name: req.body.name,
         category: req.body.category,
         price: req.body.price,
-        image: req.file.path
+        image: req.file.filename
     };
     productSchema.validate(product, (err, value) => {
         if (err) {
+            console.log("an error in updating", err);
             res.status(400);
             next(err);
         } else {
             knex('product')
                 .where({
-                    'id': req.params.id
+                    'id': req.body.id
                 })
                 .update(product)
                 .then((updatedRow) => {
                     // res.send(products);
                     console.log("updated Row ", updatedRow);
-                    send(Response);
                     if (updatedRow == 0) {
                         res.status(404);
                         throw new Error("Product not found");
                     }
-                    res.send.status(200);
+                    res.status(200);
                     Response.success = true;
                     Response.data = {
-                        id: req.params.id
+                        id: req.body.id
                     };
+                    res.send(Response);
                 }).catch((error) => {
                     console.log("error", error);
                     next(error);
@@ -164,7 +170,7 @@ router.put('/:id', upload.single('image'), (req, res, next) => {
     });
 })
 
-router.delete('/:id', (req, res, next) => {
+router.delete('/:id', cors(), (req, res, next) => {
     console.log("deleting product ", req.params.id);
 
     const deleted = knex('product')
