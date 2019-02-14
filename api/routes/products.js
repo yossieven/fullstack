@@ -104,7 +104,7 @@ router.post('/', upload.single('image'), cors(), (req, res, next) => {
         name: req.body.name,
         category: req.body.category,
         price: req.body.price,
-        image: req.file.path
+        image: req.file.filename
     };
     console.log("product", product);
     productSchema.validate(product, (err, value) => {
@@ -115,9 +115,8 @@ router.post('/', upload.single('image'), cors(), (req, res, next) => {
             knex('product').returning('id').insert(product).then((id) => {
                 res.status(200);
                 Response.success = true;
-                Response.data = {
-                    id: id
-                };
+                product.id = id;
+                Response.data = product;
                 res.send(Response);
             }).catch((error) => {
                 console.log("error", error);
@@ -128,14 +127,20 @@ router.post('/', upload.single('image'), cors(), (req, res, next) => {
 })
 
 router.post('/:id', upload.single('image'), cors(), (req, res, next) => {
-    console.log("updating product ", req.body.id);
-    console.log("image path", req.file.filename);
+    console.log("updating product ", req.params.id);
+    let imageFileName = "";
+    if (req.file != undefined) {
+        imageFileName = req.file.filename
+        console.log("image path", req.file.filename);
+    }
+
     const product = {
         name: req.body.name,
         category: req.body.category,
         price: req.body.price,
-        image: req.file.filename
+        image: imageFileName
     };
+    console.log("received product to update", JSON.stringify(product));
     productSchema.validate(product, (err, value) => {
         if (err) {
             console.log("an error in updating", err);
@@ -144,7 +149,7 @@ router.post('/:id', upload.single('image'), cors(), (req, res, next) => {
         } else {
             knex('product')
                 .where({
-                    'id': req.body.id
+                    'id': req.params.id
                 })
                 .update(product)
                 .then((updatedRow) => {
@@ -156,9 +161,8 @@ router.post('/:id', upload.single('image'), cors(), (req, res, next) => {
                     }
                     res.status(200);
                     Response.success = true;
-                    Response.data = {
-                        id: req.body.id
-                    };
+                    product.id = req.body.id;
+                    Response.data = product;
                     res.send(Response);
                 }).catch((error) => {
                     console.log("error", error);
