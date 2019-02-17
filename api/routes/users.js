@@ -3,7 +3,8 @@ const router = express.Router();
 const Joi = require('joi');
 const knex = require('../../db/knex');
 const userChema = require('../../models/user_validation');
-const path = require('path')
+const bcrypt = require('bcrypt');
+
 
 
 let Response = {
@@ -26,10 +27,37 @@ router.get('/', (req, res, next) => {
 router.get('/:id', (req, res, next) => {
     console.log("getting user " + req.params.id);
 
-    knex.select().from('user').then((users) => {
+    knex('user').where({
+        'id': req.body.id
+    }).then((users) => {
         // res.send(products);
         console.log(users);
         Response.success = true;
+        Response.data = users;
+        res.send(Response);
+    }).catch((error) => {
+        console.log(error);
+        next(error);
+    });
+});
+
+router.post('/login', (req, res, next) => {
+    console.log("getting user " + req.body.id);
+    console.log("with password " + req.body.password);
+
+    knex('user').where({
+        'id': req.body.id
+    }).then((users) => {
+        // res.send(products);
+        console.log(users);
+        Response.success = true;
+        bcrypt.compare(req.body.password, users[0].password, function (err, res) {
+            if (res == true) {
+                console.log("password matches!");
+            } else {
+                console.log("password doesn't match!");
+            }
+        });
         Response.data = users;
         res.send(Response);
     }).catch((error) => {
@@ -54,17 +82,24 @@ router.post('/', (req, res, next) => {
             res.status(400);
             next(err);
         } else {
-            knex('user').returning('id').insert(user).then((id) => {
-                res.status(200);
-                Response.success = true;
-                Response.data = {
-                    id: id
-                };
-                res.send(Response);
-            }).catch((error) => {
-                console.log("error", error);
-                next(error);
+            // encrypt password
+            bcrypt.hash(user.password, 10, function (err, hash) {
+                console.log("encrypted password : ", hash);
+                user.password = hash;
+
+                knex('user').returning('id').insert(user).then((id) => {
+                    res.status(200);
+                    Response.success = true;
+                    Response.data = {
+                        id: id
+                    };
+                    res.send(Response);
+                }).catch((error) => {
+                    console.log("error", error);
+                    next(error);
+                });
             });
+
         }
     });
 })
