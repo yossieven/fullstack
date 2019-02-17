@@ -51,15 +51,19 @@ router.post('/login', (req, res, next) => {
         // res.send(products);
         console.log(users);
         Response.success = true;
-        bcrypt.compare(req.body.password, users[0].password, function (err, res) {
-            if (res == true) {
+        bcrypt.compare(req.body.password, users[0].password, function (err, result) {
+            if (result == true) {
                 console.log("password matches!");
+                res.status(200);
+                Response.data = users;
+                res.send(Response);
             } else {
                 console.log("password doesn't match!");
+                Response.success = false;
+                res.send(Response);
             }
         });
-        Response.data = users;
-        res.send(Response);
+
     }).catch((error) => {
         console.log(error);
         next(error);
