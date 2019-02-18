@@ -42,11 +42,11 @@ router.get('/:id', (req, res, next) => {
 });
 
 router.post('/login', (req, res, next) => {
-    console.log("getting user " + req.body.id);
+    console.log("getting user " + req.body.email);
     console.log("with password " + req.body.password);
 
     knex('user').where({
-        'id': req.body.id
+        'email': req.body.email
     }).then((users) => {
         // res.send(products);
         console.log(users);
@@ -60,6 +60,7 @@ router.post('/login', (req, res, next) => {
             } else {
                 console.log("password doesn't match!");
                 Response.success = false;
+                Response.data = users;
                 res.send(Response);
             }
         });
