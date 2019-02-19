@@ -66,6 +66,24 @@ exports.up = function (knex, Promise) {
                 });
             }
         });
+    }).then(() => {
+        return knex.schema.hasTable('order').then((exists) => {
+            console.log('does knex have order table?', exists);
+            if (!exists) {
+                return knex.schema.createTable('order', function (table) {
+                    table.increments();
+                    table.integer('user_id').unsigned();
+                    table.decimal('total', 10, 2).defaultTo(0.00);
+                    table.foreign('product_id').references('id').inTable('product');
+                    table.foreign('cart_id').references('id').inTable('cart');
+                    table.string('city');
+                    table.string('street');
+                    table.timestamp('shipping_date');
+                    table.timestamp('creation_date').defaultTo(knex.fn.now());
+                    table.string('last_four');
+                });
+            }
+        });
     })
 }
 
@@ -75,5 +93,6 @@ exports.down = function (knex, Promise) {
         .dropTable('user')
         .dropTable('cart')
         .dropTable('cart_item')
-        .dropTable('category');
+        .dropTable('category')
+        .dropTable('order');
 };

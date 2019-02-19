@@ -1,10 +1,19 @@
 exports.seed = function (knex, Promise) {
     // Deletes ALL existing entries
-    return knex('user').del()
+    return knex('cart_item').del()
         .then(() => {
-            return knex('product').del()
+            return knex('cart').del()
                 .then(() => {
-                    return knex('category').del();
+                    return knex('user').del()
+                        .then(() => {
+                            return knex('product').del()
+                                .then(() => {
+                                    return knex('category').del()
+                                        .then(() => {
+                                            return knex('order').del()
+                                        })
+                                })
+                        })
                 })
-        });
+        })
 }
