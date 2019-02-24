@@ -54,6 +54,8 @@ router.post('/login', (req, res, next) => {
         bcrypt.compare(req.body.password, users[0].password, function (err, result) {
             if (result == true) {
                 console.log("password matches!");
+                req.session.email = req.body.email;
+                req.session.password = req.body.password;
                 res.status(200);
                 Response.data = users;
                 res.send(Response);
@@ -70,6 +72,17 @@ router.post('/login', (req, res, next) => {
         next(error);
     });
 });
+
+router.post('/logout', (req, res, next) => {
+    req.session.destroy((err) => {
+        if (err) {
+            res.negotiate(err);
+        } else {
+            res.end('exit');
+        }
+
+    });
+})
 
 router.post('/', (req, res, next) => {
     const user = {
