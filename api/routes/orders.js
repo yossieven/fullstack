@@ -45,12 +45,12 @@ router.get('/user/:id', (req, res, next) => {
     console.log("getting order by user " + req.params.id);
 
     knex('order').where({
-        'user_id': req.body.id
+        'user_id': req.params.id
     }).then((orders) => {
         // res.send(products);
         console.log(orders);
         Response.success = true;
-        Response.data = carts;
+        Response.data = orders;
         res.send(Response);
     }).catch((error) => {
         console.log(error);

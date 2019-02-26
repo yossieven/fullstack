@@ -1,5 +1,5 @@
 exports.seed = function (knex, Promise) {
-
+  console.log("CART seed");
   // Inserts seed entries
   return knex('cart').insert([{
       id: 1,

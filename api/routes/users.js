@@ -41,6 +41,24 @@ router.get('/:id', (req, res, next) => {
     });
 });
 
+router.get('/:id/hasCart', (req, res, next) => {
+    console.log("does user " + req.params.id + " has cart?");
+
+    knex('cart').count('* as carts').where({
+        'user_id': req.params.id
+    }).then((carts) => {
+        console.log(carts[0].carts);
+        if (carts[0].carts > 0) {
+            res.send(true);
+        } else {
+            res.send(false);
+        }
+    }).catch((error) => {
+        console.log(error);
+        next(error);
+    });
+});
+
 router.post('/login', (req, res, next) => {
     console.log("getting user " + req.body.email);
     console.log("with password " + req.body.password);
@@ -62,7 +80,7 @@ router.post('/login', (req, res, next) => {
             } else {
                 console.log("password doesn't match!");
                 Response.success = false;
-                Response.data = users;
+                Response.data = [];
                 res.send(Response);
             }
         });

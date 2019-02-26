@@ -1,5 +1,5 @@
 exports.seed = function (knex, Promise) {
-
+  console.log("ORDER seed");
   // Inserts seed entries
   return knex('order').insert([{
       id: 1,
