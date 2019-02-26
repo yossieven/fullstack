@@ -44,14 +44,18 @@ router.get('/:id', (req, res, next) => {
 router.get('/:id/hasCart', (req, res, next) => {
     console.log("does user " + req.params.id + " has cart?");
 
-    knex('cart').count('* as carts').where({
+    knex('cart').where({
         'user_id': req.params.id
     }).then((carts) => {
-        console.log(carts[0].carts);
-        if (carts[0].carts > 0) {
-            res.send(true);
+        console.log(carts[0]);
+        if (carts.length > 0) {
+            Response.success = true;
+            Response.data = carts;
+            res.send(Response);
         } else {
-            res.send(false);
+            Response.success = false;
+            Response.data = [];
+            res.send(Response);
         }
     }).catch((error) => {
         console.log(error);
