@@ -73,8 +73,9 @@ exports.up = function (knex, Promise) {
                 return knex.schema.createTable('order', function (table) {
                     table.increments();
                     table.integer('user_id').unsigned();
+                    table.foreign('user_id').references('id').inTable('user');
                     table.decimal('total', 10, 2).defaultTo(0.00);
-                    table.foreign('product_id').references('id').inTable('product');
+                    table.integer('cart_id').unsigned();
                     table.foreign('cart_id').references('id').inTable('cart');
                     table.string('city');
                     table.string('street');
@@ -89,10 +90,13 @@ exports.up = function (knex, Promise) {
 
 
 exports.down = function (knex, Promise) {
-    return knex.schema.dropTable('product')
-        .dropTable('user')
-        .dropTable('cart')
-        .dropTable('cart_item')
+    return knex.schema.dropTable('cart_item')
+        .dropTable('product')
         .dropTable('category')
-        .dropTable('order');
+        .dropTable('order')
+        .dropTable('cart')
+        .dropTable('user');
+
+
+
 };
