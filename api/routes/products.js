@@ -41,6 +41,7 @@ let Response = {
 router.get('/', (req, res, next) => {
     console.log("getting products...");
     knex.select().from('product').then((products) => {
+        console.log(req.session.id);
         Response.success = true;
         Response.data = products;
         res.send(Response);

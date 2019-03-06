@@ -63,6 +63,7 @@ router.get('/:id/hasCart', (req, res, next) => {
     });
 });
 
+
 router.post('/login', (req, res, next) => {
     console.log("getting user " + req.body.email);
     console.log("with password " + req.body.password);
@@ -72,23 +73,31 @@ router.post('/login', (req, res, next) => {
     }).then((users) => {
         // res.send(products);
         console.log(users);
-        Response.success = true;
-        bcrypt.compare(req.body.password, users[0].password, function (err, result) {
-            if (result == true) {
-                console.log("password matches!");
-                req.session.email = req.body.email;
-                req.session.password = req.body.password;
-                res.status(200);
-                Response.data = users;
-                res.send(Response);
-            } else {
-                console.log("password doesn't match!");
-                Response.success = false;
-                Response.data = [];
-                res.send(Response);
-            }
-        });
-
+        if (users.length > 0) {
+            Response.success = true;
+            bcrypt.compare(req.body.password, users[0].password, function (err, result) {
+                if (result == true) {
+                    console.log("password matches!");
+                    req.session.email = req.body.email;
+                    req.session.password = req.body.password;
+                    req.session.save();
+                    console.log('session on login', req.session);
+                    res.status(200);
+                    Response.data = users;
+                    res.send(Response);
+                } else {
+                    console.log("password doesn't match!");
+                    Response.success = false;
+                    Response.data = [];
+                    res.send(Response);
+                }
+            });
+        } else {
+            console.log("user doesn't match!");
+            Response.success = false;
+            Response.data = [];
+            res.send(Response);
+        }
     }).catch((error) => {
         console.log(error);
         next(error);
@@ -96,10 +105,12 @@ router.post('/login', (req, res, next) => {
 });
 
 router.post('/logout', (req, res, next) => {
+    console.log("logging out");
     req.session.destroy((err) => {
         if (err) {
             res.negotiate(err);
         } else {
+            // req.session.store.
             res.end('exit');
         }
 
@@ -129,6 +140,8 @@ router.post('/', (req, res, next) => {
                 user.password = hash;
 
                 knex('user').insert(user).then(() => {
+                    // req.session.email = req.body.email;
+                    // req.session.password = req.body.password;
                     res.status(200);
                     Response.success = true;
                     Response.data = null;
@@ -212,6 +225,19 @@ router.delete('/:id', (req, res, next) => {
             console.log("error", error);
             next(error);
         });
+});
+
+router.get('/session/isLogged', (req, res, next) => {
+    console.log("getting session paramaters...", req.session.id);
+    if (req.session.email != undefined && req.session.password != undefined) {
+        console.log("email", req.session.email);
+        Response.success = true;
+    } else {
+        console.log(req.session);
+        Response.success = false;
+    }
+    res.status(200);
+    res.send(Response);
 });
 
 module.exports = router;
