@@ -2,7 +2,7 @@ exports.seed = function (knex, Promise) {
   console.log("USER insert seed");
   // Inserts seed entries
   return knex('user').insert([{
-      id: 1,
+      id: '1',
       name: 'יוסי',
       last_name: 'אבן',
       email: 'yossi.even@gmail.com',
@@ -11,7 +11,7 @@ exports.seed = function (knex, Promise) {
       street: 'שקד',
       role: 0
     }, {
-      id: 2,
+      id: '2',
       name: 'יוסי',
       last_name: 'אבן',
       email: 'yossi.even@hotmail.com',

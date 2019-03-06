@@ -108,6 +108,7 @@ router.post('/logout', (req, res, next) => {
 
 router.post('/', (req, res, next) => {
     const user = {
+        id: req.body.id,
         name: req.body.name,
         last_name: req.body.last_name,
         email: req.body.email,
@@ -116,7 +117,7 @@ router.post('/', (req, res, next) => {
         street: req.body.street,
         role: req.body.role
     };
-    console.log("user", user);
+    console.log("user", req.body);
     userChema.validate(user, (err, value) => {
         if (err) {
             res.status(400);
@@ -127,12 +128,10 @@ router.post('/', (req, res, next) => {
                 console.log("encrypted password : ", hash);
                 user.password = hash;
 
-                knex('user').returning('id').insert(user).then((id) => {
+                knex('user').insert(user).then(() => {
                     res.status(200);
                     Response.success = true;
-                    Response.data = {
-                        id: id
-                    };
+                    Response.data = null;
                     res.send(Response);
                 }).catch((error) => {
                     console.log("error", error);

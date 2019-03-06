@@ -28,7 +28,7 @@ exports.up = function (knex, Promise) {
             console.log('does knex have user table?', exists);
             if (!exists) {
                 return knex.schema.createTable('user', function (table) {
-                    table.increments();
+                    table.string('id').primary().notNullable();
                     table.string('name').notNullable();
                     table.string('last_name').notNullable();
                     table.string('email').notNullable();
@@ -45,7 +45,7 @@ exports.up = function (knex, Promise) {
             if (!exists) {
                 return knex.schema.createTable('cart', function (table) {
                     table.increments();
-                    table.integer('user_id').unsigned();
+                    table.string('user_id');
                     table.timestamp('creation_date').defaultTo(knex.fn.now());
                     table.foreign('user_id').references('id').inTable('user');
                 });
@@ -72,7 +72,7 @@ exports.up = function (knex, Promise) {
             if (!exists) {
                 return knex.schema.createTable('order', function (table) {
                     table.increments();
-                    table.integer('user_id').unsigned();
+                    table.string('user_id');
                     table.foreign('user_id').references('id').inTable('user');
                     table.decimal('total', 10, 2).defaultTo(0.00);
                     table.integer('cart_id').unsigned();
