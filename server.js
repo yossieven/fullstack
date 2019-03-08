@@ -18,7 +18,9 @@ if (CONFIG.app === 'development') {
 const server = http.createServer(app);
 
 
-server.listen(CONFIG.port);
+server.listen(CONFIG.port, () => {
+    console.log(`server started on port ${CONFIG.port}`);
+});
 
 // , () => {
 //     console.log(`server started on port ${app.get('port')}`);

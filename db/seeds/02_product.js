@@ -1,4 +1,5 @@
 exports.seed = function (knex, Promise) {
+  console.log("PRODUCT seed");
   // Inserts seed entries
   return knex('product').insert([{
         id: 1,
@@ -48,6 +49,13 @@ exports.seed = function (knex, Promise) {
         category: 1,
         price: 15.00,
         image: 'z_3029815.PNG'
+      },
+      {
+        id: 8,
+        name: "עגבניות",
+        category: 2,
+        price: 6.9,
+        image: "z_22.png"
       }
     ])
     .catch((err) => {

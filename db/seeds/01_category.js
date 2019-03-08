@@ -1,4 +1,5 @@
 exports.seed = function (knex, Promise) {
+  console.log("CATEGORY seed");
   // Inserts seed entries
   return knex('category').insert([{
       id: 1,
