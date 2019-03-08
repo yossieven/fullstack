@@ -28,7 +28,7 @@ router.get('/:id', (req, res, next) => {
     console.log("getting user " + req.params.id);
 
     knex('user').where({
-        'id': req.body.id
+        'id': req.params.id
     }).then((users) => {
         // res.send(products);
         console.log(users);
@@ -78,8 +78,8 @@ router.post('/login', (req, res, next) => {
             bcrypt.compare(req.body.password, users[0].password, function (err, result) {
                 if (result == true) {
                     console.log("password matches!");
+                    req.session.user_id = users[0].id;
                     req.session.email = req.body.email;
-                    req.session.password = req.body.password;
                     req.session.save();
                     console.log('session on login', req.session);
                     res.status(200);
@@ -105,11 +105,12 @@ router.post('/login', (req, res, next) => {
 });
 
 router.post('/logout', (req, res, next) => {
-    console.log("logging out");
+
     req.session.destroy((err) => {
         if (err) {
             res.negotiate(err);
         } else {
+            console.log("logging out");
             // req.session.store.
             res.end('exit');
         }
@@ -144,7 +145,11 @@ router.post('/', (req, res, next) => {
                     // req.session.password = req.body.password;
                     res.status(200);
                     Response.success = true;
-                    Response.data = null;
+                    Response.data = [];
+                    Response.data.push(user);
+                    req.session.user_id = user.id;
+                    req.session.email = user.email;
+                    req.session.save();
                     res.send(Response);
                 }).catch((error) => {
                     console.log("error", error);
@@ -228,9 +233,10 @@ router.delete('/:id', (req, res, next) => {
 });
 
 router.get('/session/isLogged', (req, res, next) => {
-    console.log("getting session paramaters...", req.session.id);
-    if (req.session.email != undefined && req.session.password != undefined) {
-        console.log("email", req.session.email);
+    console.log("getting session paramaters...", req.session);
+    console.log("session paramaters", req.query.id);
+    if (req.session.user_id != undefined && req.session.user_id == req.query.id) {
+        console.log("user id", req.session.user_id);
         Response.success = true;
     } else {
         console.log(req.session);
