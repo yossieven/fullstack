@@ -31,16 +31,18 @@ router.get('/', (req, res, next) => {
 router.get('/:id', (req, res, next) => {
     console.log("getting cart_item " + req.params.id);
     knex('cart_item')
-        .join('products', {
+        .join('product', {
             'product.id': 'cart_item.product_id'
         })
         .select('product.id', 'product.name', 'cart_item.id', 'cart_item.amount', 'cart_item.total', 'cart_item.cart_id')
-        .where('id', req.params.id)
+        .where('cart_item.id', req.params.id)
         .then((cartItems) => {
             // res.send(products);
             console.log(cartItems);
             Response.success = true;
-            Response.data = cartItems;
+            Response.data = [];
+            console.log("cart items after select", cartItems[0]);
+            Response.data.push(cartItems[0]);
             res.send(Response);
         }).catch((error) => {
             console.log(error);
@@ -69,7 +71,8 @@ router.get('/bycart/:id', (req, res, next) => {
 });
 
 router.post('/', (req, res, next) => {
-    const cartItem = {
+    let cartItem = {
+        id: 0,
         product_id: req.body.product_id,
         amount: req.body.amount,
         total: req.body.total,
@@ -78,11 +81,13 @@ router.post('/', (req, res, next) => {
     console.log("cart_item", cartItem);
 
     knex('cart_item').returning('id').insert(cartItem).then((id) => {
+
         res.status(200);
         Response.success = true;
-        Response.data = {
-            id: id
-        };
+        cartItem.id = id[0];
+        Response.data = [];
+        Response.data.push(cartItem);
+        console.log("post cart item response", Response);
         res.send(Response);
     }).catch((error) => {
         console.log("error", error);
