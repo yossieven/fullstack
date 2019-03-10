@@ -150,6 +150,7 @@ router.post('/', (req, res, next) => {
                     req.session.user_id = user.id;
                     req.session.email = user.email;
                     req.session.save();
+                    console.log('session on create', req.session);
                     res.send(Response);
                 }).catch((error) => {
                     console.log("error", error);

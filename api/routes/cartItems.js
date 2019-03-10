@@ -48,6 +48,26 @@ router.get('/:id', (req, res, next) => {
         });
 });
 
+router.get('/bycart/:id', (req, res, next) => {
+    console.log("getting cart_item by cart " + req.params.id);
+    knex('cart_item')
+        .join('product', {
+            'product.id': 'cart_item.product_id'
+        })
+        .select('product.id', 'product.name', 'cart_item.id', 'cart_item.amount', 'cart_item.total', 'product.image')
+        .where('cart_id', req.params.id)
+        .then((cartItems) => {
+            // res.send(products);
+            console.log(cartItems);
+            Response.success = true;
+            Response.data = cartItems;
+            res.send(Response);
+        }).catch((error) => {
+            console.log(error);
+            next(error);
+        });
+});
+
 router.post('/', (req, res, next) => {
     const cartItem = {
         product_id: req.body.product_id,
@@ -56,24 +76,20 @@ router.post('/', (req, res, next) => {
         cart_id: req.body.cart_id
     };
     console.log("cart_item", cartItem);
-    cartItemChema.validate(cartItem, (err, value) => {
-        if (err) {
-            res.status(400);
-            next(err);
-        } else {
-            knex('cart_item').returning('id').insert(cartItem).then((id) => {
-                res.status(200);
-                Response.success = true;
-                Response.data = {
-                    id: id
-                };
-                res.send(Response);
-            }).catch((error) => {
-                console.log("error", error);
-                next(error);
-            });
-        }
+
+    knex('cart_item').returning('id').insert(cartItem).then((id) => {
+        res.status(200);
+        Response.success = true;
+        Response.data = {
+            id: id
+        };
+        res.send(Response);
+    }).catch((error) => {
+        console.log("error", error);
+        next(error);
     });
+
+
 })
 
 router.put('/:id', (req, res, next) => {

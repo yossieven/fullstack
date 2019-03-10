@@ -32,7 +32,6 @@ app.use(session({
     resave: false,
     name: 'shopSessionId',
     cookie: {
-        maxAge: expiryDate,
         secure: false
     }
 }));
