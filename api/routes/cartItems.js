@@ -98,7 +98,7 @@ router.post('/', (req, res, next) => {
 
 })
 
-router.put('/:id', (req, res, next) => {
+router.post('/:id', (req, res, next) => {
     console.log("updating cart_item ", req.params.id);
     const cartItem = {
         id: req.params.id,
