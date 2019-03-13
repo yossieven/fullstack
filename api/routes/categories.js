@@ -15,10 +15,9 @@ router.get('/', (req, res, next) => {
     knex.select().from('category').then((categories) => {
         Response.success = true;
         Response.data = categories;
+        console.log("categories retrieve", Response);
         res.send(Response);
-        // res.render('home', {
-        //     products: products
-        // })
+
     }).catch((error) => {
         console.log(error);
         next(error);
@@ -28,7 +27,9 @@ router.get('/', (req, res, next) => {
 router.get('/:id', (req, res, next) => {
     console.log("getting category " + req.params.id);
 
-    knex.select().from('category').then((category) => {
+    knex.select('category').where({
+        'id': req.params.id
+    }).then((category) => {
         // res.send(products);
         console.log(category);
         Response.success = true;

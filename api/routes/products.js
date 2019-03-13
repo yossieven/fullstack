@@ -76,6 +76,26 @@ router.get('/:id', (req, res, next) => {
         });
 });
 
+router.get('/name/:name', (req, res, next) => {
+    console.log("getting product starting with " + req.params.name);
+
+    knex('product').where('name', 'like', req.params.name + '%')
+        .select().then((products) => {
+            // res.send(products);
+            console.log(products);
+            Response.success = true;
+            Response.data = products;
+            res.status(200);
+            res.send(Response);
+            // res.render('home', {
+            //     products: products
+            // })
+        }).catch((error) => {
+            console.log(error);
+            next(error);
+        });
+});
+
 router.get('/category/:id', (req, res, next) => {
     console.log("getting product by category " + req.params.id);
 
