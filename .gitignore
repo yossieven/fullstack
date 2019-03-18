@@ -1,19 +1,6 @@
 node_modules/*
 
-assets/images/z_3029815.PNG
-assets/images/z_40974.PNG
-assets/images/z_4133627.PNG
-assets/images/z_42435.PNG
-assets/images/z_42466.PNG
-assets/images/z_51352.PNG
-assets/images/z_7290014758162.PNG
-assets/images/z_7290014763494.PNG
-assets/images/z_7290014763739.PNG
-assets/images/z_7296073231547.PNG
-assets/images/z_7296073231554.PNG
-assets/images/z_7296073231578.PNG
-assets/images/z_7296073232438.PNG
-assets/images/z_7296073232445.PNG
+
 node_modules/handlebars/lib/handlebars/helpers/block-helper-missing.js
 node_modules/.bin/handlebars
 node_modules/async/CHANGELOG.md
