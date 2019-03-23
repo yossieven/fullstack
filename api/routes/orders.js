@@ -58,6 +58,27 @@ router.get('/user/:id', (req, res, next) => {
     });
 });
 
+router.get('/cart/:id', (req, res, next) => {
+    console.log("getting order by cart " + req.params.id);
+
+    knex('order').where({
+        'cart_id': req.params.id
+    }).then((orders) => {
+        // res.send(products);
+        console.log(orders.length);
+        if (orders.length == 0) {
+            Response.success = false;
+        } else {
+            Response.success = true;
+        }
+
+        Response.data = orders;
+        res.send(Response);
+    }).catch((error) => {
+        console.log(error);
+        next(error);
+    });
+});
 
 router.post('/', (req, res, next) => {
     console.log("req.body", req.body);
@@ -79,9 +100,8 @@ router.post('/', (req, res, next) => {
             knex('order').returning('id').insert(order).then((id) => {
                 res.status(200);
                 Response.success = true;
-                Response.data = {
-                    id: id
-                };
+                order.id = id;
+                Response.data.push(order);
                 res.send(Response);
             }).catch((error) => {
                 console.log("error", error);
@@ -111,9 +131,7 @@ router.delete('/:id', (req, res, next) => {
             }
             res.status(200);
             Response.success = true;
-            Response.data = {
-                id: req.params.id
-            };
+            Response.data = [];
             res.send(Response);
         }).catch((error) => {
             console.log("error", error);

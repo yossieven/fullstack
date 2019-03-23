@@ -40,18 +40,36 @@ router.get('/:id', (req, res, next) => {
     });
 });
 
+router.get('/user/:id', (req, res, next) => {
+    console.log("getting cart by user id" + req.params.id);
+
+    knex('cart').where({
+        'user_id': req.params.id
+    }).then((carts) => {
+        // res.send(products);
+        console.log(carts);
+        Response.success = true;
+        Response.data = carts;
+        res.send(Response);
+    }).catch((error) => {
+        console.log(error);
+        next(error);
+    });
+});
 
 router.post('/', (req, res, next) => {
     const cart = {
-        user_id: req.body.user_id
+        user_id: req.body.user_id,
+        creation_date: req.body.creation_date
     };
     console.log("cart", cart);
     knex('cart').returning('id').insert(cart).then((id) => {
         res.status(200);
         Response.success = true;
-        Response.data = {
-            id: id
-        };
+        Response.data = [];
+        console.log("CREATED CART WITH ID", id);
+        cart.id = id;
+        Response.data.push(cart);
         res.send(Response);
     }).catch((error) => {
         console.log("error", error);

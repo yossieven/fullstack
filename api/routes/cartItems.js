@@ -159,9 +159,7 @@ router.delete('/:id', (req, res, next) => {
             }
             res.status(200);
             Response.success = true;
-            Response.data = {
-                id: req.params.id
-            };
+            Response.data = [];
             res.send(Response);
         }).catch((error) => {
             console.log("error", error);
@@ -169,6 +167,29 @@ router.delete('/:id', (req, res, next) => {
         });
 });
 
+router.delete('/cart/:id', (req, res, next) => {
+    console.log("deleting cart_item from cart ", req.params.id);
 
+    const deleted = knex('cart_item')
+        .where({
+            'cart_id': req.params.id
+        })
+        .del()
+        .then((result) => {
+            // res.send(products);
+            console.log("deleted Rows", result);
+            if (result == 0) {
+                res.status(404);
+                throw new Error("cart_item not found");
+            }
+            res.status(200);
+            Response.success = true;
+            Response.data = [];
+            res.send(Response);
+        }).catch((error) => {
+            console.log("error", error);
+            next(error);
+        });
+});
 
 module.exports = router;
