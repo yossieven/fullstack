@@ -44,10 +44,9 @@ router.get('/', (req, res, next) => {
         console.log(req.session.id);
         Response.success = true;
         Response.data = products;
+        console.log("products retrieved", Response.data);
         res.send(Response);
-        // res.render('home', {
-        //     products: products
-        // })
+
     }).catch((error) => {
         console.log(error);
         next(error);
@@ -153,6 +152,8 @@ router.post('/:id', upload.single('image'), cors(), (req, res, next) => {
     if (req.file != undefined) {
         imageFileName = req.file.filename
         console.log("image path", req.file.filename);
+    } else {
+        imageFileName = req.params.image;
     }
 
     const product = {
