@@ -31,8 +31,9 @@ router.get('/:id', (req, res, next) => {
     }).then((carts) => {
         // res.send(products);
         console.log(carts);
+        Response.data = [];
         Response.success = true;
-        Response.data = carts;
+        Response.data.push(carts);
         res.send(Response);
     }).catch((error) => {
         console.log(error);
@@ -68,7 +69,8 @@ router.post('/', (req, res, next) => {
         Response.success = true;
         Response.data = [];
         console.log("CREATED CART WITH ID", id);
-        cart.id = id;
+        cart.id = id[0];
+        console.log("CREATED CART", cart);
         Response.data.push(cart);
         res.send(Response);
     }).catch((error) => {

@@ -45,8 +45,6 @@ app.use(bodyParser.urlencoded({
 
 
 
-
-
 app.use((req, res, next) => {
     console.log("request method ", req.method);
     res.header('Access-Control-Allow-Origin', 'http://localhost:4200');
@@ -59,6 +57,8 @@ app.use((req, res, next) => {
     }
     next();
 });
+
+
 
 app.set("views", path.join(__dirname, 'views'));
 app.engine('handlebars', hbs({
@@ -98,4 +98,6 @@ app.use((err, req, res, next) => {
     });
     next();
 })
+
+
 module.exports = app;

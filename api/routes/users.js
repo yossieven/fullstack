@@ -6,6 +6,16 @@ const userChema = require('../../models/user_validation');
 const bcrypt = require('bcrypt');
 
 
+// router.use('/:id', function (req, res, next) {
+//     if (req.session.user_id && req.session.email) {
+//         console.log("session is defined");
+//         next(false);
+//     } else {
+//         console.log("session is not defined.");
+//         next(true);
+//         //res.redirect('http://localhost:4200/home');
+//     }
+// })
 
 let Response = {
     success: false,
@@ -246,5 +256,6 @@ router.get('/session/isLogged', (req, res, next) => {
     res.status(200);
     res.send(Response);
 });
+
 
 module.exports = router;

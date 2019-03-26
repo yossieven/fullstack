@@ -100,7 +100,9 @@ router.post('/', (req, res, next) => {
             knex('order').returning('id').insert(order).then((id) => {
                 res.status(200);
                 Response.success = true;
-                order.id = id;
+                Response.data = [];
+                console.log("creation of order success", id);
+                order.id = id[0];
                 Response.data.push(order);
                 res.send(Response);
             }).catch((error) => {
