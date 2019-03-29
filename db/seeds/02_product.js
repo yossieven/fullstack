@@ -112,6 +112,13 @@ exports.seed = function (knex, Promise) {
         category: 4,
         price: 86.90,
         image: 'e_9011043.PNG'
+      },
+      {
+        id: 17,
+        name: 'יין ירדן הר חרמון אדום יבש',
+        category: 5,
+        price: 29.60,
+        image: '6019.jpg'
       }
     ])
     .catch((err) => {
