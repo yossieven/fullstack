@@ -44,10 +44,9 @@ router.get('/', (req, res, next) => {
         console.log(req.session.id);
         Response.success = true;
         Response.data = products;
+        console.log("products retrieved", Response.data);
         res.send(Response);
-        // res.render('home', {
-        //     products: products
-        // })
+
     }).catch((error) => {
         console.log(error);
         next(error);
@@ -60,6 +59,26 @@ router.get('/:id', (req, res, next) => {
     knex('product').where({
             'id': req.params.id
         })
+        .select().then((products) => {
+            // res.send(products);
+            console.log(products);
+            Response.success = true;
+            Response.data = products;
+            res.status(200);
+            res.send(Response);
+            // res.render('home', {
+            //     products: products
+            // })
+        }).catch((error) => {
+            console.log(error);
+            next(error);
+        });
+});
+
+router.get('/name/:name', (req, res, next) => {
+    console.log("getting product starting with " + req.params.name);
+
+    knex('product').where('name', 'like', req.params.name + '%')
         .select().then((products) => {
             // res.send(products);
             console.log(products);
@@ -133,6 +152,8 @@ router.post('/:id', upload.single('image'), cors(), (req, res, next) => {
     if (req.file != undefined) {
         imageFileName = req.file.filename
         console.log("image path", req.file.filename);
+    } else {
+        imageFileName = req.params.image;
     }
 
     const product = {

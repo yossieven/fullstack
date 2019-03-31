@@ -3,18 +3,22 @@ exports.seed = function (knex, Promise) {
   // Inserts seed entries
   return knex('category').insert([{
       id: 1,
-      name: 'מוצרי חלב'
+      name: 'כל המוצרים'
     },
     {
       id: 2,
-      name: 'פירות וירקות'
+      name: 'מוצרי חלב'
     },
     {
       id: 3,
-      name: 'בשר ודגים'
+      name: 'פירות וירקות'
     },
     {
       id: 4,
+      name: 'בשר ודגים'
+    },
+    {
+      id: 5,
       name: 'יין ומשקאות'
     }
   ]).catch((err) => {

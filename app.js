@@ -45,19 +45,20 @@ app.use(bodyParser.urlencoded({
 
 
 
-
-
 app.use((req, res, next) => {
     console.log("request method ", req.method);
     res.header('Access-Control-Allow-Origin', 'http://localhost:4200');
     res.header('Access-Control-Allow-Credentials', true);
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, responseType, Accept, Authorization');
     if (req.method === 'OPTIONS') {
-        req.header('Access-Control-Allow-Methods', 'PUT', 'POST', 'PATCH', 'DELETE', 'GET');
+        res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
+
         return res.status(200).json({});
     }
     next();
 });
+
+
 
 app.set("views", path.join(__dirname, 'views'));
 app.engine('handlebars', hbs({
@@ -97,4 +98,6 @@ app.use((err, req, res, next) => {
     });
     next();
 })
+
+
 module.exports = app;

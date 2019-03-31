@@ -20,6 +20,7 @@ router.get('/', (req, res, next) => {
         .select('product.id', 'product.name', 'cart_item.id', 'cart_item.amount', 'cart_item.total', 'cart_item.cart_id')
         .then((cartItems) => {
             Response.success = true;
+            console.log("fetched items", cartItems);
             Response.data = cartItems;
             res.send(Response);
         }).catch((error) => {
@@ -56,12 +57,13 @@ router.get('/bycart/:id', (req, res, next) => {
         .join('product', {
             'product.id': 'cart_item.product_id'
         })
-        .select('product.id', 'product.name', 'cart_item.id', 'cart_item.amount', 'cart_item.total', 'product.image')
+        .select('cart_item.product_id', 'product.name', 'cart_item.id', 'cart_item.amount', 'cart_item.total', 'product.image')
         .where('cart_id', req.params.id)
         .then((cartItems) => {
             // res.send(products);
             console.log(cartItems);
             Response.success = true;
+            console.log("fetched items", cartItems);
             Response.data = cartItems;
             res.send(Response);
         }).catch((error) => {
@@ -87,7 +89,6 @@ router.post('/', (req, res, next) => {
         cartItem.id = id[0];
         Response.data = [];
         Response.data.push(cartItem);
-        console.log("post cart item response", Response);
         res.send(Response);
     }).catch((error) => {
         console.log("error", error);
@@ -97,45 +98,48 @@ router.post('/', (req, res, next) => {
 
 })
 
-router.put('/:id', (req, res, next) => {
+router.post('/:id', (req, res, next) => {
     console.log("updating cart_item ", req.params.id);
     const cartItem = {
+        id: req.params.id,
         product_id: req.body.product_id,
         amount: req.body.amount,
         total: req.body.total,
         cart_id: req.body.cart_id
     };
-    cartItemChema.validate(cartItem, (err, value) => {
-        if (err) {
-            res.status(400);
-            next(err);
-        } else {
+    knex('cart_item')
+        .join('product', {
+            'product.id': 'cart_item.product_id'
+        })
+        .select('product.id', 'product.name', 'cart_item.id', 'cart_item.amount', 'cart_item.total', 'cart_item.cart_id')
+        .where('cart_item.id', req.params.id)
+        .then((detailedCartItems) => {
             knex('cart_item')
                 .where({
-                    'id': req.params.id
+                    'id': cartItem.id
                 })
-                .update(cart_item)
+                .update(cartItem)
                 .then((updatedRow) => {
                     // res.send(products);
-                    console.log("updated Row ", updatedRow);
                     if (updatedRow == 0) {
                         res.status(404);
                         throw new Error("cart_item not found");
                     }
                     res.status(200);
                     Response.success = true;
-                    Response.data = {
-                        id: req.params.id
-                    };
+                    //Response.data = [];
+                    detailedCartItems[0].amount = cartItem.amount;
+                    detailedCartItems[0].product_id = cartItem.product_id;
+                    detailedCartItems[0].cart_id = cartItem.cart_id;
+                    detailedCartItems[0].total = cartItem.total;
+                    Response.data = detailedCartItems;
                     res.send(Response);
                 }).catch((error) => {
                     console.log("error", error);
                     next(error);
                 });
 
-        }
-
-    });
+        });
 })
 
 router.delete('/:id', (req, res, next) => {
@@ -155,9 +159,32 @@ router.delete('/:id', (req, res, next) => {
             }
             res.status(200);
             Response.success = true;
-            Response.data = {
-                id: req.params.id
-            };
+            Response.data = [];
+            res.send(Response);
+        }).catch((error) => {
+            console.log("error", error);
+            next(error);
+        });
+});
+
+router.delete('/cart/:id', (req, res, next) => {
+    console.log("deleting cart_item from cart ", req.params.id);
+
+    const deleted = knex('cart_item')
+        .where({
+            'cart_id': req.params.id
+        })
+        .del()
+        .then((result) => {
+            // res.send(products);
+            console.log("deleted Rows", result);
+            if (result == 0) {
+                res.status(404);
+                throw new Error("cart_item not found");
+            }
+            res.status(200);
+            Response.success = true;
+            Response.data = [];
             res.send(Response);
         }).catch((error) => {
             console.log("error", error);
