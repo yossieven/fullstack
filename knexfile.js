@@ -6,7 +6,7 @@ module.exports = {
             host: 'localhost',
             user: 'root',
             password: '',
-            database: 'project1'
+            database: 'fullstack'
         },
         migrations: {
             directory: __dirname + '/db/migrations'
