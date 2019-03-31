@@ -9,3 +9,5 @@ download this project as zip and extract it in a folder. At the terminal window 
 then you can run it in test mode as 'nodemon server'
 currently the project is set to development mode, which means it will create all tables + dummy records to the DB.
 In order for this to work, you will need to create empty DB named fullstack (project uses mySql).
+
+server runs at port 3000 or whatever port is set on the .env file.
